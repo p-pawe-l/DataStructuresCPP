@@ -8,54 +8,85 @@
 namespace nodes {
 	
 	/**
-	* @brief Basic node build for storing numeric key and provided data to store
+	* @brief Basic node build for storing comparable type of data
 	*/
-	template <typename NumericVariable, typename StoredData>
+	template <node_concepts::ComparableType ComparableVariable>
 	class basic_node {
 	public:
-		basic_node(NumericVariable&& __key, StoredData&& __data):
-		m_numeric_key{std::move(__key)},
+		explicit basic_node(ComparableVariable&& __data):
 		m_data{std::move(__data)}
 		{}
-		basic_node(NumericVariable&& __key, const StoredData& __data):
-		m_numeric_key{std::move(__key)},
+		explicit basic_node(const ComparableVariable&& __data):
 		m_data{__data}
 		{}
 
-		auto key() const noexcept -> NumericVariable {
-			return m_numeric_key;
-		}
-		auto data() const noexcept -> StoredData {
+		auto data() const noexcept -> ComparableVariable {
 			return m_data;
 		}
-		auto change_key(NumericVariable&& new_key) -> void {
-			m_numeric_key = std::move(new_key);
-		}
-		auto change_data(StoredData&& new_data) -> void {
+		auto change_data(ComparableVariable&& new_data) -> void {
 			m_data = std::move(new_data);
 		}
-		auto change_data(const StoredData& new_data) -> void {
+		auto change_data(const ComparableVariable& new_data) -> void {
 			m_data = new_data;
 		}
 
+		auto operator==(basic_node<ComparableVariable>&& __other) -> bool {
+			return (this->m_data == std::move(__other).m_data);
+		}
+		auto operator==(const basic_node<ComparableVariable>& __other) -> bool {
+			return (this->m_data == __other.m_data);
+		}
+
+		auto operator!=(basic_node<ComparableVariable>&& __other) -> bool {
+			return !(*this == std::move(__other));
+		}
+		auto operator!=(const basic_node<ComparableVariable>& __other) -> bool {
+			return !(*this == __other);
+		}
+
+		auto operator<(basic_node<ComparableVariable>&& __other) -> bool {
+			return (this->m_data < std::move(__other).m_data);
+		}
+		auto operator<(const basic_node<ComparableVariable>& __other) -> bool {
+			return (this->m_data < __other.m_data);
+		}
+
+		auto operator<=(basic_node<ComparableVariable>&& __other) -> bool {
+			return *this < std::move(__other) || *this == std::move(__other);
+		}
+		auto operator<=(const basic_node<ComparableVariable>& __other) -> bool {
+			return *this < __other || *this == __other;
+		}
+
+		auto operator>(basic_node<ComparableVariable>&& __other) -> bool {
+			return !(*this <= std::move(__other));
+		}
+		auto operator>(const basic_node<ComparableVariable>& __other) -> bool {
+			return !(*this <= __other);
+		}
+
+		auto operator>=(basic_node<ComparableVariable>&& __other) -> bool {
+			return !(*this < std::move(__other));
+		}
+		auto operator>=(const basic_node<ComparableVariable>& __other) -> bool {
+			return !(*this < __other);
+		}
 
 	protected:
-		NumericVariable m_numeric_key;
-		StoredData m_data;
+		ComparableVariable m_data;
 	};
 
 	/**
 	* @brief Specialized node for applying relations beetwen nodes
 	*/
-
-	template <typename NumericVariable, typename StoredData>
-	class edge_node final : public basic_node<NumericVariable, StoredData> {
+	template <node_concepts::ComparableType ComparableVariable>
+	class edge_node final : public basic_node<ComparableVariable> {
 	public:
-		edge_node(NumericVariable&& __key, StoredData&& __data):
-		basic_node<NumericVariable, StoredData>(std::move(__key), std::move(__data))
+		explicit edge_node(ComparableVariable&& __data):
+		basic_node<ComparableVariable>(std::move(__data))
 		{}
-		edge_node(NumericVariable&& __key, const StoredData& __data):
-		basic_node<NumericVariable, StoredData>(std::move(__key), __data)
+		explicit edge_node(const ComparableVariable& __data):
+		basic_node<ComparableVariable>(std::move(__data), __data)
 		{}
 
 		/**
@@ -78,7 +109,7 @@ namespace nodes {
 		* @param __container Collection of node to be connected
 		*/
 		template <typename Container>
-		requires node_concepts::EdgeNodeContainer<Container, edge_node<NumericVariable, StoredData>>
+		requires node_concepts::EdgeNodeContainer<Container, edge_node<ComparableVariable>>
 		auto mulit_connect(Container&& __container) -> void {
 
 		}
@@ -88,7 +119,7 @@ namespace nodes {
 		* @param __container Collection of node to be connected
 		*/
 		template <typename Container>
-		requires node_concepts::EdgeNodeContainer<Container, edge_node<NumericVariable, StoredData>>
+		requires node_concepts::EdgeNodeContainer<Container, edge_node<ComparableVariable>>
 		auto mulit_connect(const Container& __container) -> void {
 
 		}
@@ -106,16 +137,16 @@ namespace nodes {
 		std::vector<edge_node> m_connected_nodes;
 	};
 
-	template <typename NumericVariable, typename StoredData>
-	class related_node final : public basic_node<NumericVariable, StoredData> {
+	template <node_concepts::ComparableType ComparableVariable>
+	class related_node final : public basic_node<ComparableVariable> {
 	public:
-		related_node(NumericVariable&& __key, StoredData&& __data):
-		basic_node<NumericVariable, StoredData>(std::move(__key), std::move(__data)),
+		related_node(ComparableVariable&& __data):
+		basic_node<ComparableVariable>(std::move(__data)),
 		m_parent{std::nullopt},
 		m_children{}
 		{}
-		related_node(NumericVariable&& __key, const StoredData& __data):
-		basic_node<NumericVariable, StoredData>(std::move(__key), __data),
+		related_node(const ComparableVariable& __data):
+		basic_node<ComparableVariable>(__data),
 		m_parent{std::nullopt},
 		m_children{}
 		{}
@@ -128,12 +159,12 @@ namespace nodes {
 		}
 
 		template <typename Container>
-		requires node_concepts::RelatedNodeContainer<Container, related_node<NumericVariable, StoredData>>
+		requires node_concepts::RelatedNodeContainer<Container, related_node<ComparableVariable>>
 		auto add_children(Container&& __container) -> void {
 
 		}
 		template <typename Container>
-		requires node_concepts::RelatedNodeContainer<Container, related_node<NumericVariable, StoredData>>
+		requires node_concepts::RelatedNodeContainer<Container, related_node<ComparableVariable>>
 		auto add_children(const Container& __container) -> void {
 			
 		}

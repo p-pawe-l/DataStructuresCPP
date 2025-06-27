@@ -13,4 +13,11 @@ namespace node_concepts {
       concept RelatedNodeContainer = 
             std::ranges::range<A> && 
             std::same_as<std::ranges::range_value_t<A>, B>;
+
+      template <typename A>
+      concept ComparableType = requires (const A& a, const A& b) 
+      {
+            { a < b } -> std::convertible_to<bool>;
+            { a > b } -> std::convertible_to<bool>;
+      };
 }
