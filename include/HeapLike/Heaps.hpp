@@ -9,11 +9,14 @@
 #include "HeapsConcepts.hpp"
 #include "HeapsErrors.hpp"
 
-namespace {
+namespace heaps {
 	template <heaps_concepts::ComparableType HeapKeyType, typename CompareType>
 	requires heaps_concepts::SupportsComparison<CompareType, HeapKeyType>
 	class binary_heap {
 	public:
+		binary_heap():
+		__keys_bin{}
+		{}
 		virtual ~binary_heap() = default;	
 		
 		auto push(HeapKeyType&& __val) -> void {
@@ -147,9 +150,7 @@ namespace {
 			}
 		}
 	};
-}
 
-namespace heaps {
 #define HEAP_KEY Node
 
 	namespace min_heaps {
@@ -162,10 +163,10 @@ namespace heaps {
 
 		public:
 			min_heap() = default;
-			explicit min_heap(ComparableVariable &&__root = 0) {
+			explicit min_heap(ComparableVariable &&__root) {
 				MIN_BIN_HEAP::__keys_bin.push_back(std::move(__root));
 			}
-			explicit min_heap(const ComparableVariable &__root = 0) {
+			explicit min_heap(const ComparableVariable &__root) {
 				MIN_BIN_HEAP::__keys_bin.push_back(__root);
 			}
 
@@ -227,10 +228,10 @@ namespace heaps {
 
 		public:
 			max_heap() = default;
-			explicit max_heap(ComparableVariable &&__root = 0) {
+			explicit max_heap(ComparableVariable &&__root) {
 				MAX_BIN_HEAP::__keys_bin.push_back(std::move(__root));
 			}
-			explicit max_heap(const ComparableVariable &__root = 0) {
+			explicit max_heap(const ComparableVariable &__root) {
 				MAX_BIN_HEAP::__keys_bin.push_back(__root);
 			}
 
