@@ -30,7 +30,7 @@ namespace heaps_functions {
 	auto transform_to_heap(ContainerItterator&& __begin, ContainerItterator&& __end, heap_type&& __type = heap_type::min_heap) -> void {
 		switch (__type) {
 			case (heap_type::min_heap): {
-
+				
 				break;
 			}
 			case (heap_type::max_heap): {
