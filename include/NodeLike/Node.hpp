@@ -194,3 +194,38 @@ namespace nodes {
 		std::vector<related_node> m_children;
 	};
 }
+
+namespace linked_list_nodes {
+
+	/**
+	* @brief Basic build for node with special purpose for implementing linked/double linked lists 
+	*/
+	template <typename Type>
+	class basic_node {
+	public:
+		basic_node() = default;
+
+	protected:
+		basic_node<Type>* __related;
+	};
+
+	/**
+	* @brief Special purpose node for implementing linked_list 
+	*/
+	template <typename Type>
+	class forward_node final : public basic_node<Type> {};
+
+	/**
+	* @brief Special purpose node for implementing reversed_linked_list 
+	*/
+	template <typename Type>
+	class backward_node final : public basic_node<Type> {};
+
+	/**
+	* @brief Special purpose node for implementing double_linked_list 
+	*/
+	template <typename Type>
+	class bidirectional_node final : public basic_node<Type> {};
+
+
+}
