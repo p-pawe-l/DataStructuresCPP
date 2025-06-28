@@ -9,6 +9,8 @@ namespace heaps_concepts {
 	{
 		{ a < b } -> std::convertible_to<bool>;
 		{ a > b } -> std::convertible_to<bool>;
+		{ a == b } -> std::convertible_to<bool>;
+		{ a != b } -> std::convertible_to<bool>;
 	};
 
 	template <typename CompareVar, typename Type>
