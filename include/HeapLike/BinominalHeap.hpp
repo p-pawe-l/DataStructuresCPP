@@ -74,7 +74,7 @@ public:
 	* @param __value New value to be inserted 
 	*/
 	auto push(ComparableVariable &&__value) -> void {
-		
+
 	}
 
 	/**
@@ -130,7 +130,15 @@ public:
 		}
 	}
 
+	/**
+	* @brief Merges two binominal heaps into single one
+	* @param __other Other binominal heap to be merged into yours 
+	*/
 	auto merge(binominal_heap&& __other) -> void {}
+	/**
+	* @brief Merges two binominal heaps into single one
+	* @param __other Other binominal heap to be merged into yours 
+	*/
 	auto merge(const binominal_heap& __other) -> void {}
 
 	template <typename HeapCollection>
