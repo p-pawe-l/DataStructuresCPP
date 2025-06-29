@@ -203,18 +203,65 @@ namespace linked_list_nodes {
 	template <typename Type>
 	class basic_node {
 	public:
-		basic_node() = default;
+		explicit basic_node(Type&& __data);
+		explicit basic_node(const Type&& __data);
 
-	protected:
-		basic_node<Type>* __related;
+		/**
+		* @brief Access stored data in node 
+		*/
+		auto data() const noexcept -> Type {
+			return m_stored_data;
+		}
+
+ 	protected:
+		Type m_stored_data;
 	};
 
 	/**
 	* @brief Special purpose node for implementing linked_list 
 	*/
 	template <typename Type>
-	class forward_node final : public basic_node<Type> {};
+	class forward_node final : public basic_node<Type> {
+	public:
+		explicit forward_node(Type&& __data):
+		basic_node<Type>{std::move(__data)}
+		{}
+		explicit forward_node(const Type& __data):
+		basic_node<Type>{__data}
+		{}
+		forward_node(Type&& __data, forward_node<Type> __next):
+		basic_node<Type>{std::move(__data)},
+		m_next{&std::move(__next)}
+		{}
+		forward_node(const Type& __data, const forward_node<Type> __next):
+		basic_node<Type>{std::move(__data)},
+		m_next{&__next}
+		{}
+		
+		/**
+		* @brief Accessing next related node
+		*/
+		auto next() const noexcept-> forward_node<Type>* {
+			return m_next;
+		}
+		/**
+		* @brief Setting next related node 
+		*/
+		auto set_next(forward_node<Type>&& __next) -> void {
+			m_next = &std::move(__next);
+		}
+		/**
+		* @brief Setting next related node 
+		*/
+		auto set_next(const forward_node<Type>& __next) -> void {
+			m_next = &__next;
+		}
+		
 
+	private:
+		forward_node<Type>* m_next;
+	};
+	
 	/**
 	* @brief Special purpose node for implementing reversed_linked_list 
 	*/

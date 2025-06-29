@@ -3,6 +3,8 @@
 
 #include "NodeLike/Node.hpp"
 #include "ListConcepts.hpp"
+#include <memory>
+#include <utility>
 
 /**
 * @brief Standard version of linked list
@@ -24,6 +26,19 @@ public:
 
 
 private:
+	template <typename Container>
+	requires list_concepts::ContainerOf<Container, Type>
+	auto create_linked_list(Container&& __container) -> void {
+		std::unique_ptr<std::vector<linked_list_nodes::forward_node<Type>>> __temp;
+		// 1 step:
+		// Creating nodes
+		this->m_start_node = linked_list_nodes::forward_node<Type>(std::move(__container.at(0)));
+		std::ranges::for_each(__container.begin() + 1, __container.end(), [&](const auto& __val) -> void {
+			auto __node = std::make_unique(__val);
+		});
+	}
+
+
 	linked_list_nodes::forward_node<Type> m_start_node;	
 };
 
