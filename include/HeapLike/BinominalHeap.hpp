@@ -66,15 +66,21 @@ public:
 	* @brief Inserts new node with provided value into heap
 	* @param __value New value to be inserted 
 	*/
-	auto push(const ComparableVariable &&__value) -> void {
+	auto push(ComparableVariable &&__value) -> void {
+		m_keys.push_back(std::move(__value));
+		m_root_list.emplace_back(std::move(__value));
 
+		this->consolidate();
 	}
 	/**
 	* @brief Inserts new node with provided value into heap
 	* @param __value New value to be inserted 
 	*/
-	auto push(ComparableVariable &&__value) -> void {
+	auto push(const ComparableVariable &__value) -> void {
+		m_keys.push_back(std::move(__value));
+		m_root_list.emplace_back(__value);
 
+		this->consolidate();
 	}
 
 	/**
@@ -156,9 +162,18 @@ private:
 		};
 		auto iterator = std::ranges::min_element(m_root_list, binominal_tree_root_comparison);
 
-		return m_root_list[iterator];
+		return m_root_list.at(iterator);
 	}
-	auto consolidate() -> void {}
+	auto consolidate() -> void {
+		bool needs_consolidation = true;
+		
+		while (needs_consolidation) {
+			for (const auto& binominal_tree : this->m_root_list) {
+				
+			}
+		}
+		
+	}
 	auto bubble_up(const ComparableVariable& __decreased_node) -> void {}
 
 	heap_size_t m_heap_size;
